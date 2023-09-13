@@ -1,0 +1,29 @@
+body {
+    background-color: #f0f2f5;
+}
+button{
+    height: 42px;
+    background-color: #00a033;
+}
+.border-00a033{
+    border-color: #00a033;
+}
+.txt-00a0033 {
+    color: #00a033;
+}
+
+.bg-image {
+    background-image: url('../img/bg-novo.png');
+    opacity: 0.25;
+    position: fixed;
+    z-index: -9;
+}
+
+/* Quando o mouse é passado sobre o input */
+.search:hover + .flex > button {
+    background-color: #00631f;
+}
+
+.search:hover {
+    border-color: #00631f;
+}
