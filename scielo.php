@@ -66,7 +66,7 @@ class SciELO {
 
                 array_push($this->retorno, 
                     '<div class="flex flex-1 flex-col">
-                        <a class="link-article" href="http://www.scielo.pt/scielo.php?script=sci_arttext&pid='.$code.'&lang=pt" target="_blank">
+                        <a class="link-article" href="https://www.scielo.br/scielo.php?script=sci_arttext&pid='.$code.'&lang=pt" target="_blank">
                             <p>'.$title.'</p>
                             <p>'.$data.'</p>
                         </a>
