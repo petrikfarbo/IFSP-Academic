@@ -5,11 +5,13 @@ class PubMed {
     private $search;
     private $retmax;
     private $retstart;
+    private $total;
 
     function __construct($search, $retmax, $retstart){
         $this->search = $search;
         $this->retmax = $retmax;
         $this->retstart = $retstart;
+        $this->total = 0;
     }
 
     function getArticles(){
@@ -31,18 +33,22 @@ class PubMed {
         $xml = simplexml_load_file($search_url); //Carrega o XML da pagina
 
         if($xml->Count > 0){ //Verifica se a pesquisa possui resultados
-            //$this->total = $xml->Count; //Recebe a quantidade de artigos que a busca possui
+            $this->total = $xml->Count; //Recebe a quantidade de artigos que a busca possui
             $article_ids = array(); 
 
             foreach ($xml->IdList->Id as $id) { //loop para armazenar os ids dos artigos em um array
                 $article_ids[] = (string)$id;
             }
 
-            return $this->getDataArticles($article_ids);
+            return $this->getDataArticles($article_ids);    
             exit();
         }else{
-            array_push($this->retorno,'<div class="flex m-auto"> Sem Resultados para esta pesquisa. </div>');
-            return json_encode($this->retorno);
+            $this->retorno = array(
+                'html' => $this->retorno,
+                'totalArtigos' => $this->total
+            );
+            //array_push($this->retorno,'<div class="flex m-auto"> Sem Resultados para esta pesquisa. </div>');
+            //return $this->retorno;
             exit();
         }
         //** RECEBER OS ID's DOS ARTIGOS PUBMED **
@@ -71,14 +77,18 @@ class PubMed {
                     <p>'.$data.'</p>
                 </a>
             </div>
-            <div class"flex">
+            <div class"flex flex-col items-center justify-center">
                 <a href="https://pubmed.ncbi.nlm.nih.gov/" target="_blank"><img class="h-10" src="assets/img/pubmed.png"></a>
             </div>'); //Adiciona no array já formatado com HTML
             
         }
         //** CONSULTAR OS ARTIGOS APARTIR DO ID **
 
-        return json_encode($this->retorno);
+        $this->retorno = array(
+            'html' => $this->retorno,
+            'totalArtigos' => $this->total
+        );
+        return $this->retorno;
     }
 
 }
