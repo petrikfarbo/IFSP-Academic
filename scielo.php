@@ -1,4 +1,5 @@
 <?php
+
 class SciELO {
     private $retorno = array();
   
@@ -37,7 +38,7 @@ class SciELO {
 
     
         $ch = curl_init(); //Inicializar cURL
-        curl_setopt($ch, CURLOPT_URL, urldecode($search_url)); //seta a URL no cURL
+        curl_setopt($ch, CURLOPT_URL, $search_url); //seta a URL no cURL
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true); //autoriza redirecionamento 
 
         $html = curl_exec($ch); //Executa o cURL
@@ -58,32 +59,60 @@ class SciELO {
 
 
             $totalArtigos = $this->getStr($totalArtigos, 'TotalHits">', '</', 0); //Total de artigos encontrados
-
-            for ($i = 0; $i < 4; $i++) { //loop para armazenar os dados dos artigos em um array
-                $code = $this->getStr($resultHtml, 'title" id="title-', '">', $i); //Recebe o codigo do artigo
-                $title = $this->getStr($resultHtml, 'title" id="title-'.$code.'">', '</', 0); //Recebe o titulo do artigo
-                $data = $this->getStr($resultHtml, '<span style="margin: 0">', '</', $i*2).'/'.$this->getStr($resultHtml, '<span style="margin: 0">', '</', ($i*2)+1); //Recebe a data do artigo
-
-                array_push($this->retorno, 
-                    '<div class="flex flex-1 flex-col">
-                        <a class="link-article" href="https://www.scielo.br/scielo.php?script=sci_arttext&pid='.$code.'&lang=pt" target="_blank">
-                            <p>'.$title.'</p>
-                            <p>'.$data.'</p>
-                        </a>
-                    </div>
-                    <div class"flex flex-col items-center justify-center">
-                        <a href="https://scielo.org/" target="_blank"><img class="h-10" src="assets/img/scielo.png"></a>
-                    </div>'
-                ); //Adiciona no array já formatado com HTML
+            $totalArtigos = str_replace(' ', '', $totalArtigos);
+            if($totalArtigos < $this->retstart){//compara o total com o start para saber se ainda possui artigos
+                $this->retorno = array(
+                    'html' => $this->retorno,
+                    'totalArtigos' => $totalArtigos
+                );
+                return $this->retorno;
+                exit();
             }
+
+            if($totalArtigos >= 4){
+                for ($i = 0; $i < 4; $i++) { //loop para armazenar os dados dos artigos em um array
+                    $title = $this->getStr($resultHtml, 'st_title="', '"', $i); //Recebe o titulo do artigo
+                    $data = $this->getStr($resultHtml, '<span style="margin: 0">', '</', $i*2).'/'.$this->getStr($resultHtml, '<span style="margin: 0">', '</', ($i*2)+1); //Recebe a data do artigo
+                    $link = $this->getStr($resultHtml, 'st_url="http://', '"', $i);
+    
+                    array_push($this->retorno, 
+                        '<div class="flex flex-1 flex-col">
+                            <a class="link-article" href="https://'.$link.'&lang=pt" target="_blank">
+                                <p>'.$title.'</p>
+                                <p>'.$data.'</p>
+                            </a>
+                        </div>
+                        <div class"flex flex-col items-center justify-center">
+                            <a href="https://scielo.org/" target="_blank"><img class="h-10" src="assets/img/scielo.png"></a>
+                        </div>'
+                    ); //Adiciona no array já formatado com HTML
+                }
+            }else{
+                for ($i = 0; $i < $totalArtigos; $i++) { //loop para armazenar os dados dos artigos em um array
+                    $title = $this->getStr($resultHtml, 'st_title="', '"', $i); //Recebe o titulo do artigo
+                    $data = $this->getStr($resultHtml, '<span style="margin: 0">', '</', $i*2).'/'.$this->getStr($resultHtml, '<span style="margin: 0">', ',', ($i*2)+1); //Recebe a data do artigo
+                    $link = $this->getStr($resultHtml, 'st_url="http://', '"', $i);
+    
+                    array_push($this->retorno, 
+                        '<div class="flex flex-1 flex-col">
+                            <a class="link-article" href="https://'.$link.'&lang=pt" target="_blank">
+                                <p>'.$title.'</p>
+                                <p>'.$data.'</p>
+                            </a>
+                        </div>
+                        <div class"flex flex-col items-center justify-center">
+                            <a href="https://scielo.org/" target="_blank"><img class="h-10" src="assets/img/scielo.png"></a>
+                        </div>'
+                    ); //Adiciona no array já formatado com HTML
+                }
+            }
+
+            
             $this->retorno = array(
                 'html' => $this->retorno,
                 'totalArtigos' => $totalArtigos
             );
             return $this->retorno;
-            exit();
-        } else {
-            //echo 'Elemento com ID "ResultArea" não encontrado na página.';
         }
     }
 

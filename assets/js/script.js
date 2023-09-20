@@ -14,23 +14,35 @@ $(document).ready(function(){
     var searchAnterior = "";
     var linkArray = [];
     var retstart = 4;
+    var total = 0;
 
     $('.search-btn').click(function(){
-        realizarPesquisa();
+        var search = $("#search").val();
+        if(search != ''){
+            $('.search-icon').addClass('hidden');
+            $('.loading-search').removeClass('hidden');
+            realizarPesquisa(search);
+        }        
     });
 
     $("#search").keypress(function(event) {
         if (event.which === 13) { // 13 é o código da tecla "Enter"
-          realizarPesquisa();
+            var search = $("#search").val();
+            if(search != ''){
+                $('.search-icon').addClass('hidden');
+                $('.loading-search').removeClass('hidden');
+                realizarPesquisa(search);
+            }
         }
     });
 
 
     
-    function realizarPesquisa() {
-        var search = $("#search").val();
+    function realizarPesquisa(search) {
         if(search !== searchAnterior){
             $(".search-result").empty();
+            $(".result-total").empty();
+            
 
             $.ajax({
                 type: "POST",
@@ -40,7 +52,11 @@ $(document).ready(function(){
                     search: search
                 },
                 success: function(response) {
-                    $.each(response, function(index, element) {
+                    retstart = 4;
+                    total = 0;
+                    linkArray = [];      
+                    total = total + response['total'];              
+                    $.each(response['html'], function(index, element) {
                         var $articleLink = $(element).find('.link-article').attr('href');
 
                         if (!linkArray.includes($articleLink)) {
@@ -52,18 +68,33 @@ $(document).ready(function(){
                             // Adicione a div à página (por exemplo, ao elemento com id "container")
                             $(".search-result").append(divInfo);
                         }else{
+                            total = total - 1;
                             console.log(!linkArray.includes($articleLink));
                         }
                     });
-
+                    $('.result-total').append(linkArray.length+'/'+total+' Resultados Encontrados. | '+(response['total']-total)+' Links repetidos.');
 
 
                     $(".search-result").append('<div class="flex flex-1 flex-col mb-4 border-b-2 items-center justify-center text-center txt-00a0033 carregar-mais"><button class="mais-btn text-white px-4 py-2 rounded-lg">Ver Mais Resultados</button></div>');
                     $(".carregar-mais").append('<div class="flex flex-1 flex-row mb-4 items-center justify-center text-center txt-00a0033"> Petrik Farbo - IFSP Campus São João da Boa Vista<br/>2023');
                     
+
+
                     $('.mais-btn').click(function(){
-                        carregarMais(search);
+                        if(linkArray.length < response['total']){
+                            $('.mais-btn').prop("disabled",true);
+                            $('.mais-btn').empty();
+                            $('.mais-btn').append('<svg class="animate-spin h-5 w-5 mr-3 inline-block" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M12 2a10 10 0 110 20 10 10 0 010-20zm0 18a8 8 0 100-16 8 8 0 000 16z"/></svg>Carregando...');
+                            carregarMais(search);
+                        }else{
+                            $('.mais-btn').addClass('hidden');
+                        }
                     });
+
+
+
+                    $('.loading-search').addClass('hidden');
+                    $('.search-icon').removeClass('hidden');                    
                 },
                 error: function(xhr, status, error) {
                     console.error("Erro na requisição (POST):", error);
@@ -88,6 +119,7 @@ $(document).ready(function(){
         setTimeout(function() {
             setTimeout(function() {
                 $('.search-result').removeClass('hidden');
+                $('.result-total').removeClass('hidden');
             }, 800);
 
             $('.main').removeClass('justify-center');
@@ -107,7 +139,7 @@ $(document).ready(function(){
             },
             success: function(response) {
                 console.log(retstart);
-                $.each(response, function(index, element) {
+                $.each(response['html'], function(index, element) {
                     var $articleLink = $(element).find('.link-article').attr('href');
 
                     if (!linkArray.includes($articleLink)) {
@@ -119,10 +151,19 @@ $(document).ready(function(){
                         // Adicione a div à página (por exemplo, ao elemento com id "container")
                         $(".carregar-mais").before(divInfo);
                     }else{
+                        total = total - 1;
                         console.log(!linkArray.includes($articleLink));
                     }
                 });
                 retstart = retstart + 4;
+                $(".result-total").empty();
+                $('.result-total').append(linkArray.length+'/'+total+' Resultados Encontrados. | '+(response['total']-total)+' Links repetidos.');
+
+                $('.mais-btn').prop("disabled",false);
+                $('.mais-btn').empty();
+                $('.mais-btn').append('Ver Mais Resultados');
+
+                //fazer a condição para o botao carregar mais sumir quando total = tamanho do array
             },
             error: function(xhr, status, error) {
                 console.error("Erro na requisição (POST):", error);

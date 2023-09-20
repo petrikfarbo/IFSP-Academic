@@ -48,7 +48,7 @@ class PubMed {
                 'totalArtigos' => $this->total
             );
             //array_push($this->retorno,'<div class="flex m-auto"> Sem Resultados para esta pesquisa. </div>');
-            //return $this->retorno;
+            return $this->retorno;
             exit();
         }
         //** RECEBER OS ID's DOS ARTIGOS PUBMED **
