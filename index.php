@@ -33,7 +33,43 @@
                         </button>
                     </div>
                 </div>
-                <div class="bg-white p-2 shadow-md w-11/12 flex flex-col mb-1 result-total hidden delay-500 ease-in duration-800 "></div>
+                <div class="result-toggles bg-white p-2 shadow-md w-11/12 flex flex-col mb-1 hidden delay-500 ease-in duration-800 ">
+                    <div class="flex flex-row items-center toggles">
+                        <div class="flex flex-col items-center flex-1">
+                            <img class="h-5 mb-2" src="assets/img/pubmed.png">
+                            <label for="toggle1" class="flex items-center cursor-pointer">
+                                <div class="relative">
+                                    <input type="checkbox" id="toggle1" class="hidden" result="pubmed-result" checked>
+                                    <div class="toggle__line w-10 h-4 bg-gray-400 rounded-full shadow-inner"></div>
+                                    <div class="toggle__dot absolute w-6 h-6 bg-white rounded-full shadow -left-1 -top-1 transition"></div>
+                                </div>
+                            </label>
+                        </div>
+                        <div class="flex flex-col items-center flex-1">
+                            <img class="h-6 mb-1" src="assets/img/scielo.png">
+                            <label for="toggle2" class="flex items-center cursor-pointer">
+                                <div class="relative">
+                                    <input type="checkbox" id="toggle2" class="hidden" result="scielo-result" checked >
+                                    <div class="toggle__line w-10 h-4 bg-gray-400 rounded-full shadow-inner"></div>
+                                    <div class="toggle__dot absolute w-6 h-6 bg-white rounded-full shadow -left-1 -top-1 transition"></div>
+                                </div>
+                            </label>
+                        </div>
+                        <div class="flex flex-col items-center flex-1">
+                            <img class="h-5 mb-2" src="assets/img/bdtd.png">
+                            <label for="toggle3" class="flex items-center cursor-pointer">
+                                <div class="relative">
+                                    <input type="checkbox" id="toggle3" class="hidden" result="bdtd-result" checked>
+                                    <div class="toggle__line w-10 h-4 bg-gray-400 rounded-full shadow-inner"></div>
+                                    <div class="toggle__dot absolute w-6 h-6 bg-white rounded-full shadow -left-1 -top-1 transition"></div>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="flex result-total pt-2 items-center justify-center">
+                        8/360 Resultados Encontraos. | 5 Links repetidos.
+                    </div>
+                </div>
                 <div class="bg-white p-4 rounded-lg shadow-md w-11/12 flex flex-col mb-3 search-result delay-500 ease-in duration-800 hidden"></div>
             </div>
         </div>

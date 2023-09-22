@@ -71,7 +71,7 @@ class PubMed {
             $title = (string)$article->MedlineCitation->Article->ArticleTitle; //Recebe o titulo do artigo
             $data = $article->MedlineCitation->DateRevised->Day.'/'.$article->MedlineCitation->DateRevised->Month.'/'.$article->MedlineCitation->DateRevised->Year; //Recebe a data do artigo
             array_push($this->retorno, 
-            '<div class="flex flex-1 flex-col">
+            '<div class="flex flex-1 flex-col" id="toggle1">
                 <a class="link-article" href="https://pubmed.ncbi.nlm.nih.gov/'.(string)$article->MedlineCitation->PMID.'" target="_blank">
                     <p>'.$title.'</p>
                     <p>'.$data.'</p>

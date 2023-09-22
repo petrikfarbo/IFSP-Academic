@@ -62,7 +62,16 @@ $(document).ready(function(){
                         if (!linkArray.includes($articleLink)) {
                             // Se não estiver no array, adicione-o
                             linkArray.push($articleLink);
-                            var divInfo = $('<div class="flex flex-1 flex-row mb-4 border-b-2">');
+
+                            if($articleLink.includes('pubmed')){
+                                var divInfo = $('<div class="flex flex-1 flex-row mb-4 border-b-2 pubmed-result">');
+                            }
+                            if($articleLink.includes('scielo')){
+                                var divInfo = $('<div class="flex flex-1 flex-row mb-4 border-b-2 scielo-result">');
+                            }
+                            if($articleLink.includes('bdtd')){
+                                var divInfo = $('<div class="flex flex-1 flex-row mb-4 border-b-2 bdtd-result">');
+                            }
 
                             divInfo.html(element);
                             // Adicione a div à página (por exemplo, ao elemento com id "container")
@@ -92,7 +101,6 @@ $(document).ready(function(){
                     });
 
 
-
                     $('.loading-search').addClass('hidden');
                     $('.search-icon').removeClass('hidden');                    
                 },
@@ -119,7 +127,7 @@ $(document).ready(function(){
         setTimeout(function() {
             setTimeout(function() {
                 $('.search-result').removeClass('hidden');
-                $('.result-total').removeClass('hidden');
+                $('.result-toggles').removeClass('hidden');
             }, 800);
 
             $('.main').removeClass('justify-center');
@@ -145,11 +153,24 @@ $(document).ready(function(){
                     if (!linkArray.includes($articleLink)) {
                         // Se não estiver no array, adicione-o
                         linkArray.push($articleLink);
-                        var divInfo = $('<div class="flex flex-1 flex-row mb-4 border-b-2">');
+
+                        if($articleLink.includes('pubmed')){
+                            var divInfo = $('<div class="flex flex-1 flex-row mb-4 border-b-2 pubmed-result">');
+                        }
+                        if($articleLink.includes('scielo')){
+                            var divInfo = $('<div class="flex flex-1 flex-row mb-4 border-b-2 scielo-result">');
+                        }
+                        if($articleLink.includes('bdtd')){
+                            var divInfo = $('<div class="flex flex-1 flex-row mb-4 border-b-2 bdtd-result">');
+                        }
 
                         divInfo.html(element);
                         // Adicione a div à página (por exemplo, ao elemento com id "container")
                         $(".carregar-mais").before(divInfo);
+
+                        vrfToggles($('#toggle1'));
+                        vrfToggles($('#toggle2'));
+                        vrfToggles($('#toggle3'));
                     }else{
                         total = total - 1;
                         console.log(!linkArray.includes($articleLink));
@@ -170,6 +191,22 @@ $(document).ready(function(){
             }
         });
     }
+
+    // Função para verificar e exibir o estado de um toggle
+    function vrfToggles($toggle) {
+        if ($toggle.is(':checked')) {
+            $('.'+$toggle.attr('result')).removeClass('hidden');
+        } else {
+            $('.'+$toggle.attr('result')).addClass('hidden');
+        }
+    }
+
+    // Você também pode verificar o estado dos toggles em resposta a alguma ação do usuário.
+    $('.relative').click(function () {
+        vrfToggles($('#toggle1'));
+        vrfToggles($('#toggle2'));
+        vrfToggles($('#toggle3'));
+    });
 });
 
                 

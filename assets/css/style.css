@@ -27,3 +27,20 @@ button{
 .search:hover {
     border-color: #00631f;
 }
+
+/* Estilos para o toggle */
+.toggle__line {
+    transition: background-color 0.3s;
+  }
+
+  .toggle__dot {
+    transition: transform 0.3s;
+  }
+
+  input[type="checkbox"]:checked + .toggle__line {
+    background-color: #00631f;
+  }
+
+  input[type="checkbox"]:checked + .toggle__line + .toggle__dot {
+    transform: translateX(100%);
+  }
