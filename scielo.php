@@ -72,10 +72,13 @@ class SciELO {
             if($totalArtigos >= 4){
                 for ($i = 0; $i < 4; $i++) { //loop para armazenar os dados dos artigos em um array
                     $title = $this->getStr($resultHtml, 'st_title="', '"', $i); //Recebe o titulo do artigo
-                    $data = $this->getStr($resultHtml, '<span style="margin: 0">', '</', $i*2).'/'.$this->getStr($resultHtml, '<span style="margin: 0">', '</', ($i*2)+1); //Recebe a data do artigo
+                    //$data = $this->getStr($resultHtml, '<span style="margin: 0">', '</', ($i*2)+1); //Recebe a data do artigo
                     $link = $this->getStr($resultHtml, 'st_url="http://', '"', $i);
-    
-                    array_push($this->retorno, 
+                    
+                    /** PROBLEMA COM A DATA
+                     * 
+                     * 
+                    array_push($this->retorno,  
                         '<div class="flex flex-1 flex-col">
                             <a class="link-article" href="https://'.$link.'&lang=pt" target="_blank">
                                 <p>'.$title.'</p>
@@ -86,18 +89,30 @@ class SciELO {
                             <a href="https://scielo.org/" target="_blank"><img class="h-10" src="assets/img/scielo.png"></a>
                         </div>'
                     ); //Adiciona no array já formatado com HTML
+                    *
+                    *
+                    **/
+                    array_push($this->retorno,  
+                        '<div class="flex flex-1 flex-col">
+                            <a class="link-article" href="https://'.$link.'&lang=pt" target="_blank">
+                                <p>'.$title.'</p>
+                            </a>
+                        </div>
+                        <div class"flex flex-col items-center justify-center">
+                            <a href="https://scielo.org/" target="_blank"><img class="h-10" src="assets/img/scielo.png"></a>
+                        </div>'
+                    ); //Adiciona no array já formatado com HTML
                 }
             }else{
                 for ($i = 0; $i < $totalArtigos; $i++) { //loop para armazenar os dados dos artigos em um array
                     $title = $this->getStr($resultHtml, 'st_title="', '"', $i); //Recebe o titulo do artigo
-                    $data = $this->getStr($resultHtml, '<span style="margin: 0">', '</', $i*2).'/'.$this->getStr($resultHtml, '<span style="margin: 0">', ',', ($i*2)+1); //Recebe a data do artigo
+                    //$data = $this->getStr($resultHtml, '<span style="margin: 0">', ',', ($i*2)+1); //Recebe a data do artigo
                     $link = $this->getStr($resultHtml, 'st_url="http://', '"', $i);
     
                     array_push($this->retorno, 
                         '<div class="flex flex-1 flex-col">
                             <a class="link-article" href="https://'.$link.'&lang=pt" target="_blank">
                                 <p>'.$title.'</p>
-                                <p>'.$data.'</p>
                             </a>
                         </div>
                         <div class"flex flex-col items-center justify-center">
@@ -117,4 +132,7 @@ class SciELO {
     }
 
 }
+
+//$teste = new SciELO('Burnout', 4, 1);
+//print_r($bdtdData = $teste->getArticles());
 ?>
