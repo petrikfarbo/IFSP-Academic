@@ -86,18 +86,22 @@ class Bdtd {
     function getArticlesData($link){
         $html = file_get_contents($link); //Carrega o HTML da pagina
 
-        $html = $this->getStr($html, 'class="col-sm-12">', '</div>', 0); //Recebe o HTML do artigo
+        $html = $this->getStr($html, 'class="col-sm-12">', '<div class="record-tabs', 0); //Recebe o HTML do artigo
         
         $authorlist = ""; //Variavel para armazenar os autores
         $keywords = ""; //Variavel para armazenar as palavras chaves
         $texto = ""; //Variavel para armazenar o texto
         $publicado = ""; //Variavel para armazenar a universidade
 
+        for ($i=0; $i < substr_count($html, 'nofollow">'); $i++) {  //loop para armazenar as palavras chaves
+            $keywords .= ucfirst(strtolower($this->getStr($html, 'nofollow">', '</a', $i).'; ')); //Recebe as palavras chaves e formatas a primeira letra para maiuscula
+        }
+
         $authorlist = urldecode($this->getStr($html, '?author=', '">', 0)); //Recebe o HTML do artigo
-        $authorlist = str_replace('+', ' ', $authorlist); //Recebe o HTML do artigo
+        $authorlist = str_replace('+', ' ', $authorlist); //subistitui o + por espaço
+
         $texto = substr($this->getStr($html, '<p>', '</', 0), 0, 500); //Recebe o texto do artigo
         $data = $this->getStr($html, 'Data de Defesa:</th><td>', '</', 0); //Recebe a data do artigo
-        $keywords = $this->getStr($html, 'nofollow">', '"', 0); //Recebe as palavras chaves do artigo
         $publicado = strip_tags($this->getStr($html, 'Organization">', '</', 0)); //Recebe quem publicou o artigo
         $publicado = trim($publicado); //Remove os espaços em branco do inicio e do fim da string
         
@@ -124,6 +128,6 @@ class Bdtd {
 
 }
 
-//$teste = new Bdtd('Scraping', 4, 0);
+//$teste = new Bdtd('Web Scraping', 4, 0);
 //var_dump($teste->getArticles());
 ?>

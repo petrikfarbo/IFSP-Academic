@@ -156,6 +156,15 @@ class SciELO {
         $publicado = $this->getStr($html, 'citation_publisher" content="', '"', 0); //Recebe o local de publicação do artigo
         
         
+        if(empty($keywords)){ //Verifica se a variavel $keywords é vazia, se for, não adicione o artigo no array
+            $keywords = $this->getStr($html, '<b>Keywords:', '<div class="trans-abstract">', 0); //Recebe o HTML do artigo
+            $keywords = strip_tags($keywords);
+        }
+        if(empty($texto)){ //Verifica se a variavel $texto é vazia, se for, não adicione o artigo no array
+            $texto = $this->getStr($html, 'Abstract:</a></p>', '</p>', 0); //Recebe o HTML do artigo
+            $texto = strip_tags($texto);
+            $texto = substr($texto, 0, 500);
+        }
         if($keywords == ""){ //Verifica se a variavel $keywords é vazia, se for, não adicione o artigo no array
             $keywords = "Não obtido";
         }
@@ -175,6 +184,6 @@ class SciELO {
 
 }
 
-//$teste = new SciELO('Cancer', 4, 0);
+//$teste = new SciELO('Twitter-based economic policy', 4, 0);
 //print_r($teste->getArticles());
 ?>
