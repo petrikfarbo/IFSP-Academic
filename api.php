@@ -1,11 +1,12 @@
 <?php
-require_once 'pubMed.php';
+require_once 'pubmed.php';
 require_once 'scielo.php';
 require_once 'bdtd.php';
-//* PUBMED 
-//$_POST['search'] = 'limpeza';
-if(isset($_POST['search']) && !empty($_POST['search'])){
 
+//$_POST['search'] = 'Cancer';//debug
+//verifica se o post foi enviado e se não está vazio
+if(isset($_POST['search']) && !empty($_POST['search'])){
+    //verifica se o post foi enviado e se não está vazio
     if(isset($_POST['retstart'])){
         $retmax = 4;
         $retstart = $_POST['retstart'];
@@ -13,11 +14,12 @@ if(isset($_POST['search']) && !empty($_POST['search'])){
         $retmax = 4;
         $retstart = 0;
     }
+    //recebe o termo de pesquisa
     $search = $_POST['search'];
-    $html = array();
+    $html = array(); //Array para armazenar os artigos
 
 
-
+    //Recebe os dados dos artigos da pubmed
     $pubmed = new PubMed($search, $retmax, $retstart);
     $pubmedData = $pubmed->getArticles();
     if($pubmedData['totalArtigos'] > 0){
@@ -25,7 +27,7 @@ if(isset($_POST['search']) && !empty($_POST['search'])){
     }
     
 
-
+    //Recebe os dados dos artigos da bdtd
     $bdtd = new Bdtd($search, $retmax, $retstart);
     $bdtdData = $bdtd->getArticles();
     if($bdtdData['totalArtigos'] > 0){
@@ -33,7 +35,7 @@ if(isset($_POST['search']) && !empty($_POST['search'])){
     }
 
 
-
+    //Recebe os dados dos artigos da scielo
     $scielo = new SciELO($search, $retmax, $retstart);
     $scieloData = $scielo->getArticles();
     if($scieloData['totalArtigos'] > 0){
@@ -41,17 +43,18 @@ if(isset($_POST['search']) && !empty($_POST['search'])){
     }
     
 
+    //cria um array com os dados dos artigos e o total de artigos encontrados
     $retorno = array(
         'html' => $html,
         'total' => $pubmedData['totalArtigos'] + $scieloData['totalArtigos'] + $bdtdData['totalArtigos']
     );
+
+    //embaralha o array
     shuffle($retorno['html']);  
+
+    //retorna o array em json
     echo json_encode($retorno);
   
 }
-
-
-
-
 
 ?>

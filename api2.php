@@ -1,65 +1,63 @@
 <?php
-if(isset($_POST['search']) && !empty($_POST['search'])){ //Verifica se é uma pesquisa valida
-    $retorno = array();
 
-    //** RECEBER OS ID's DOS ARTIGOS PUBMED **
-    $base_url = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi";
-    $params = array(
-        'db' => 'pubmed', //Banco de dados da consulta
-        'term' => $_POST['search'], //Termo que vai ser pesquisado
-        'datetype' => 'edat', //Filtro -> Formato de data 
-        'mindate' => date('Y/m/d', strtotime('-5 year')), // Filtro -> 5 Anos menos que a data atual
-        'maxdate' => date('Y/m/d'), //Filtro -> Data atual
-        'retmax' => 4, //Maximo de retorno apartir do start
-        'retstart' => 0, //start da pesquisa apartir do 0
-        'api_key' => '2d414b9f14c460cd43012677550fad876b08' //Chave API da pubmed
-    );
-    
-    $query_string = http_build_query($params); //Query dos parametros
-    $search_url = $base_url . '?' . $query_string; // URL montada com os parametros
+// URLs que você deseja acessar
+$urls = array(
+    'http://localhost:81/IFSP/IFSP-Academic/pubmed.php',
+    'http://localhost:81/IFSP/IFSP-Academic/scielo.php',
+    'http://localhost:81/IFSP/IFSP-Academic/bdtd.php',
+);
+$html = array();
+$total = 0;
 
-    $xml = simplexml_load_file($search_url); //Carrega o XML da pagina
-    if($xml->Count > 0){ //Verifica se a pesquisa possui resultados
-        $total = $xml->Count; //Recebe a quantidade de artigos que a busca possui
-        
-        $article_ids = array(); 
-        foreach ($xml->IdList->Id as $id) { //loop para armazenar os ids dos artigos em um array
-            $article_ids[] = (string)$id;
-        }
-    //** RECEBER OS ID's DOS ARTIGOS PUBMED **
+// Inicialize o cURL multi handler
+$mh = curl_multi_init();
 
-    //** CONSULTAR OS ARTIGOS APARTIR DO ID **
-        $efetch_base_url = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi";
-        $efetch_params = array(
-            'db' => 'pubmed', //Banco de dados da consulta
-            'id' => implode(",", $article_ids), //Ids dos artigos coletados
-            'retmode' => 'xml', //especificando o tipo de retorno da pagina
-            'api_key' => '2d414b9f14c460cd43012677550fad876b08' //Chave API da pubmed
-        );
-        $efetch_query_string = http_build_query($efetch_params); //Query dos parametros
-        $efetch_url = $efetch_base_url . '?' . $efetch_query_string; // URL montada com os parametros
+// Inicialize um array para armazenar os handles de cURL individuais
+$handles = array();
 
-        $efetch_xml = simplexml_load_file($efetch_url); //Carrega o XML da pagina
-        foreach ($efetch_xml->PubmedArticle as $article) { //loop para armazenar os dados dos artigos em um array
-            $title = (string)$article->MedlineCitation->Article->ArticleTitle; //Recebe o titulo do artigo
-            $data = $article->MedlineCitation->DateRevised->Day.'/'.$article->MedlineCitation->DateRevised->Month.'/'.$article->MedlineCitation->DateRevised->Year; //Recebe a data do artigo
-            array_push($retorno, '<div class="flex flex-1 flex-col">
-                                    <a href="https://pubmed.ncbi.nlm.nih.gov/'.(string)$article->MedlineCitation->PMID.'" target="_blank">
-                                    <p>'.$title.'</p>
-                                    <p>'.$data.'</p>
-                                </div>
-                                <div class"flex">
-                                    <a href="https://pubmed.ncbi.nlm.nih.gov/" target="_blank"><img class="h-10" src="assets/img/pubmed.png"></a>
-                                </div>'); //Adiciona no array já formatado com HTML
-            
-        }
-        //** CONSULTAR OS ARTIGOS APARTIR DO ID **
-    }else{
-        array_push($retorno,'<div class="flex m-auto"> Sem Resultados para esta pesquisa. </div>');
-    }
-
-    $json_retorno = json_encode($retorno); //Codifica o array em json 
-    echo $json_retorno; // imprime o retorno codificado para trabalhar com javascript.
+// Crie e adicione os handles de cURL individuais ao array
+foreach ($urls as $url) {
+    $ch = curl_init($url);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_multi_add_handle($mh, $ch);
+    $handles[] = $ch;
 }
+
+// Execute as requisições em paralelo
+do {
+    curl_multi_exec($mh, $running);
+} while ($running > 0);
+
+// Coleta os resultados
+$responses = array();
+
+foreach ($handles as $ch) {
+    $response = curl_multi_getcontent($ch);
+    $responses[] = $response;
+    curl_multi_remove_handle($mh, $ch);
+    curl_close($ch);
+}
+
+// Feche o cURL multi handler
+curl_multi_close($mh);
+
+// Agora, $responses conterá as respostas das requisições para as URLs
+
+// Exemplo de como você pode imprimir as respostas
+foreach ($responses as $index => $response) {
+    $responseArray = json_decode($response, true);
+    $totalArtigos = $responseArray['totalArtigos'];
+    $Artigos = $responseArray['html'];
+    $html = array_merge($html, $Artigos);
+    $total = $total + $totalArtigos[0];
+}
+$retorno = array(
+    'html' => $html,
+    'total' => $total
+);
+
+var_dump($retorno);
+exit();
+
 
 ?>

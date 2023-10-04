@@ -11,6 +11,9 @@ button{
 .txt-00a0033 {
     color: #00a033;
 }
+.text-sky {
+    color: #3978ad;
+}
 
 .bg-image {
     background-image: url('../img/bg-novo.png');
