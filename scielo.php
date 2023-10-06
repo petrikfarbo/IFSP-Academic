@@ -146,25 +146,39 @@ class SciELO {
             $authorlist .= $this->getStr($html, 'citation_author" content="', '"', $i).';';
         }
         
-        for ($i=0; $i < substr_count($html, 'citation_keywords" content="'); $i++) {  //loop para armazenar as palavras chaves
-            $keywords .= $this->getStr($html, 'citation_author" content="', '"', $i).';';
+        
+        
+
+        if(strpos($html, 'citation_abstract" content="') !== false){ //Verifica se existe o elemento no HTML da pagina
+            $texto = substr($this->getStr($html, 'citation_abstract" content="', '"', 0), 0, 500); //Recebe o texto do artigo
+        }else if(strpos($html, 'Abstract:</a></p>') !== false){ //Verifica se existe o elemento no HTML da pagina
+            $texto = substr($this->getStr($html, 'Abstract:</a></p>', '</p>', 0), 0, 500); //Recebe o texto do artigo
+            $texto = strip_tags($texto);
+            $texto = substr($texto, 0, 500);
+        }else if(strpos($html, 'objectives:') !== false){ //Verifica se existe o elemento no HTML da pagina
+            $texto = substr($this->getStr($html, 'objectives:', '</div>', 0), 0, 500); //Recebe o texto do artigo
+            $texto = strip_tags($texto);
+            $texto = substr($texto, 0, 500);
         }
-        
-        
-        $texto = substr($this->getStr($html, 'citation_abstract" content="', '"', 0), 0, 500); //Recebe o texto do artigo
+
+
+        if(strpos($html, 'citation_keywords" content=') !== false){ //Verifica se existe o elemento no HTML da pagina
+            for ($i=0; $i < substr_count($html, 'citation_keywords" content="'); $i++) {  //loop para armazenar as palavras chaves
+                $keywords .= $this->getStr($html, 'citation_author" content="', '"', $i).';';
+            }
+        }else if(strpos($html, '<b>Keywords:') !== false){ //Verifica se existe o elemento no HTML da pagina
+            $keywords = substr($this->getStr($html, '<b>Keywords:', '<div ', 0), 0, 500); //Recebe o texto do artigo
+            $keywords = strip_tags($keywords);
+        }else if(strpos($html, '<b>KEYWORDS:') !== false){ //Verifica se existe o elemento no HTML da pagina
+            $keywords = substr($this->getStr($html, '<b>KEYWORDS:', '<div ', 0), 0, 500); //Recebe o texto do artigo
+            $keywords = strip_tags($keywords);
+        }
+
+        //$texto = substr($this->getStr($html, 'citation_abstract" content="', '"', 0), 0, 500); //Recebe o texto do artigo
         $data = $this->getStr($html, 'citation_publication_date" content="', '"', 0); //Recebe a data do artigo
         $publicado = $this->getStr($html, 'citation_publisher" content="', '"', 0); //Recebe o local de publicação do artigo
         
         
-        if(empty($keywords)){ //Verifica se a variavel $keywords é vazia, se for, não adicione o artigo no array
-            $keywords = $this->getStr($html, '<b>Keywords:', '<div class="trans-abstract">', 0); //Recebe o HTML do artigo
-            $keywords = strip_tags($keywords);
-        }
-        if(empty($texto)){ //Verifica se a variavel $texto é vazia, se for, não adicione o artigo no array
-            $texto = $this->getStr($html, 'Abstract:</a></p>', '</p>', 0); //Recebe o HTML do artigo
-            $texto = strip_tags($texto);
-            $texto = substr($texto, 0, 500);
-        }
         if($keywords == ""){ //Verifica se a variavel $keywords é vazia, se for, não adicione o artigo no array
             $keywords = "Não obtido";
         }

@@ -109,6 +109,7 @@ $(document).ready(function(){
                                 //se o link já estiver no array, diminui o total de resultados
                                 total--;
                                 //console.log(!linkArray.includes($articleLink)); //debug
+                                //console.log(linkArray); //debug
                             }
                         });
                         //adiciona o total de resultados na tela e o total de links repetidos
@@ -215,7 +216,8 @@ $(document).ready(function(){
                     }else{
                         //se o link já estiver no array, diminui o total de resultados
                         total--;
-                        //console.log(!linkArray.includes($articleLink));//debug
+                        //console.log($articleLink);
+                        //console.log(linkArray);
                     }
                 });
                 //incrementa o retstart para a proxima pesquisa
