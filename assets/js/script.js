@@ -119,7 +119,12 @@ $(document).ready(function(){
                         $(".search-result").append('<div class="flex flex-1 flex-col mb-4 mt-4 items-center justify-center text-center txt-00a0033 carregar-mais"><button class="mais-btn text-white px-4 py-2 rounded-lg">Ver Mais Resultados</button></div>');
                         $(".carregar-mais").append('<div class="flex flex-1 flex-row mb-4 items-center justify-center text-center txt-00a0033"> Petrik Farbo - IFSP Campus São João da Boa Vista<br/>2023');
                         
-    
+                        //verifica se o total de resultados é maior que o tamanho do array de links para habilitar ou não o botão de carregar mais resultados
+                        if(linkArray.length == total){
+                            $('.mais-btn').prop("disabled",true);
+                            $('.mais-btn').addClass('hidden');
+                        }
+
                         //funcao para carregar mais resultados ao clicar no botão caso o total de resultados seja maior que o tamanho do array de links
                         $('.mais-btn').click(function(){
                             //se for, desabilita o botão e adiciona o loading
@@ -222,6 +227,12 @@ $(document).ready(function(){
                 });
                 //incrementa o retstart para a proxima pesquisa
                 retstart = retstart + 4;
+
+                //verifica se o total de resultados é maior que o tamanho do array de links para habilitar ou não o botão de carregar mais resultados
+                if(linkArray.length == total){
+                    $('.mais-btn').prop("disabled",true);
+                    $('.mais-btn').addClass('hidden');
+                }
 
                 //adiciona o total de resultados na tela e o total de links repetidos atualizado
                 $(".result-total").empty();

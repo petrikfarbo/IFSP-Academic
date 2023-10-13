@@ -45,8 +45,8 @@ if(isset($_POST['search']) && !empty($_POST['search'])){
 
     //cria um array com os dados dos artigos e o total de artigos encontrados
     $retorno = array(
-        'html' => $html,
-        'total' => $pubmedData['totalArtigos'] + $scieloData['totalArtigos'] + $bdtdData['totalArtigos']
+        'html' => mb_convert_encoding($html, 'UTF-8', 'auto'), //converte o array para utf-8
+        'total' => $pubmedData['totalArtigos'] + $scieloData['totalArtigos'] + $bdtdData['totalArtigos'] //soma o total de artigos encontrados
     );
 
     //embaralha o array
