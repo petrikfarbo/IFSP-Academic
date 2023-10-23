@@ -25,6 +25,7 @@ class Bdtd {
     function getArticles(){
         //** RECEBER OS ID's DOS ARTIGOS PUBMED **
         $params = array(
+            'sort' => 'year',
             'filter[]' => 'publishDate:"['.date('Y', strtotime('-4 year')).'+TO+'.date('Y').']"', //Banco de dados da consulta
             'lookfor' => urlencode($this->search), //Termo que vai ser pesquisado
             'type' => 'AllFields', //Filtro -> Formato de data 
